@@ -45,35 +45,10 @@ export class AppComponent {
     center: { lat: 45.56010577746812, lng: -73.62072318393797 }
   }
 
-  initMarkers() {
-    const initialMarkers = [
-      {
-        position: { lat: 45.508890, lng: -73.56123 },
-        icon: "../assets/gun.png"
-      },
-      {
-        position: { lat: 45.508870, lng: -73.56126 },
-        icon: "../assets/gun.png"
-      },
-      {
-        position: { lat: 45.508880, lng: -73.561632 },
-        icon: "../assets/gun.png",
-        m: "hhhhhh"
-      }
-    ];
-    for (let index = 0; index < initialMarkers.length; index++) {
-      const data = initialMarkers[index];
-      const marker = this.generateMarker(data, index);
-      marker.addTo(this.map).bindPopup(`<b>${data.position.lat},  ${data.position.lng}</b>`);
-      this.map.panTo(data.position);
-      this.markers.push(marker)
-    }
-  }
-
   generateMarker(data: any, index: number) {
     const icon = Leaflet.icon({
       iconUrl: data.icon, 
-      iconSize: [30, 30]
+      iconSize: [20, 20]
     })
     return Leaflet.marker(data.position,{icon: icon} )
       .on('click', (event) => this.markerClicked(event, index));
@@ -81,18 +56,47 @@ export class AppComponent {
 
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
-    this.initMarkers();
     const headers = new HttpHeaders({"Access-Control-Allow-Origin": "*"});
     const requestOptions = { headers: headers };
     this.http.get<any>("http://localhost:5000/HW").subscribe(data => {
-      this.generateMarkerData(data)});
+      this.InitMarkerData(data)});
   }
   
-  generateMarkerData(data: any){
+  InitMarkerData(data: any){
+
     var dataFinal: dataInterface[] = []
     data = Object.values(data)[0];
     const sizeData: number = data.length
-    for (let i = 1; i < 100; i++) {
+    for (let i = 1; i < data.length; i++) {
+
+      let incidentIcon = "../assets/gun.png";
+      switch(data[i][0]) { 
+        case 'Vol de véhicule à moteur': { 
+          incidentIcon = "../assets/car_thief.png";
+           break; 
+        } 
+        case 'Méfait': { 
+          incidentIcon = "../assets/profanity.png";
+           break; 
+        } 
+        case 'Vol dans / sur véhicule à moteur': { 
+          incidentIcon = "../assets/car.png";
+          break; 
+        } 
+        case 'Introduction': { 
+          incidentIcon = "../assets/house_thief.png";
+          break; 
+        } 
+        case 'Vols qualifiés': { 
+          incidentIcon = "../assets/robbery_knife.png";
+          break; 
+        } 
+        case 'Infractions entrainant la mort': { 
+          incidentIcon = "../assets/skull.png";
+          break; 
+        } 
+      } 
+      
       let dataElement: dataInterface = {
         CATEGORIE: data[i][0],
         DATE: data[i][1],
@@ -102,11 +106,22 @@ export class AppComponent {
         LATITUDE: data[i][7],
         PDQ_NOM: data[i][8],
         OUTLIERFLAG: data[i][10],
-        ICON: "../assets/gun.png"
+        ICON: incidentIcon
       };
       dataFinal.push(dataElement);
     }
-    this.initializeMarkers(dataFinal)
+    
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    var dataInitial: dataInterface[] = []
+    dataInitial = this.filterDayMonth(dataFinal,currentYear,currentMonth)
+
+    this.generateMarkerData(dataInitial)
+  }
+
+  generateMarkerData(data: any){
+    this.initializeMarkers(data)
   }
 
   initializeMarkers(dataToMark: dataInterface[]) {
@@ -114,16 +129,45 @@ export class AppComponent {
       let dataMarker = 
         {
           position: { lat: dataToMark[index].LATITUDE, lng: dataToMark[index].LONGITUDE },
-          icon:dataToMark[index].ICON
+          icon:dataToMark[index].ICON,
+          category:dataToMark[index].CATEGORIE,
+          date:dataToMark[index].DATE,
+          time:dataToMark[index].QUART
         };
         const marker = this.generateMarker(dataMarker, index);
-        marker.addTo(this.map).bindPopup(`<b>${dataMarker.position.lat},  ${dataMarker.position.lng}</b>`);
+        marker.addTo(this.map).bindPopup(`<b>${dataMarker.category},  ${dataMarker.time},  ${dataMarker.date}</b>`);
         this.map.panTo(dataMarker.position);
         this.markers.push(marker)
     }
   }
 
+  filterQuarter(data: dataInterface[], quarter: string){
+    var dataInitial: dataInterface[] = []
+    for (let i = 0; i < data.length; i++) {
+      if(data[i].QUART == quarter)
+        dataInitial.push(data[i]);
+    }
+    return(dataInitial)
+  }
   
+  filterDayMonth(data: dataInterface[], year: number, month: number){
+    var dataInitial: dataInterface[] = []
+    for (let i = 0; i < data.length; i++) {
+      if(new Date(data[i].DATE).getFullYear() == year && new Date(data[i].DATE).getMonth()+1 == month)
+        dataInitial.push(data[i]);
+    }
+    return(dataInitial)
+  }
+
+  filterCategory(data: dataInterface[], category: string){
+    var dataInitial: dataInterface[] = []
+    for (let i = 0; i < data.length; i++) {
+      if(data[i].CATEGORIE == category)
+        dataInitial.push(data[i]);
+    }
+    return(dataInitial)
+  }
+
   mapClicked($event: any) {
     console.log($event.latlng.lat, $event.latlng.lng);
   }

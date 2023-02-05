@@ -1,12 +1,15 @@
 <div class="Container">
-  <H1> HELLOs</H1>
+  <H1> Montreal Criminal Activity Monitoring</H1>
   <div class="map-container"
     leaflet
     [leafletOptions]="options"
     (leafletMapReady)="onMapReady($event)"
     (leafletClick)="mapClicked($event)">
   </div>
-
+  <form name="form1">
+    <label for="adm">Month and year: </label>
+    <input type="month" name="doa">
+  </form>
 </div>
 
 <router-outlet></router-outlet>
