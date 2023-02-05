@@ -140,6 +140,47 @@ export class AppComponent {
         this.markers.push(marker)
     }
   }
+  toggleCarThief = true;
+  toggleMefait = true;
+  toggleCar = true;
+  toggleHouseThief = true;
+  toggleThief = true;
+  toggleDead = true;
+  toggleAbberant = true;
+
+  test(e: Event){
+    switch ((e.target as HTMLImageElement).id){
+      case 'car_thief': { 
+          this.toggleCarThief =!this.toggleCarThief;
+           break; 
+        } 
+        case 'mefait': { 
+          this.toggleMefait =!this.toggleMefait;
+           break; 
+        } 
+        case 'car': { 
+          this.toggleCar =!this.toggleCar;
+          break; 
+        } 
+        case 'house_thief': { 
+          this.toggleHouseThief =!this.toggleHouseThief;
+          break; 
+        } 
+        case 'thief': { 
+          this.toggleThief =!this.toggleThief;
+          break; 
+        } 
+        case 'dead': { 
+          this.toggleDead =!this.toggleDead;
+          break; 
+        } 
+        case 'abberant': {
+          this.toggleAbberant =!this.toggleAbberant;
+          break;
+        }
+    }
+    
+  }
 
   filterQuarter(data: dataInterface[], quarter: string){
     var dataInitial: dataInterface[] = []
