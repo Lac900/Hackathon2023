@@ -4,6 +4,17 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
+interface dataInterface {
+  CATEGORIE: string;
+  DATE: Date;
+  QUART: string;
+  PDQ: string;
+  LONGITUDE: number;
+  LATITUDE: number;
+  PDQ_NOM: string;
+  OUTLIERFLAG: boolean;
+  }
+
 Leaflet.Icon.Default.imagePath = 'assets/';
 const serverURL = "localhost:5000/"
 @Component({
@@ -11,6 +22,7 @@ const serverURL = "localhost:5000/"
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+  
 export class AppComponent {
   
   constructor (private http: HttpClient){}
@@ -39,7 +51,8 @@ export class AppComponent {
       },
       {
         position: { lat: 45.508880, lng: -73.561632 },
-        icon: "../assets/gun.png"
+        icon: "../assets/gun.png",
+        m: "hhhhhh"
       }
     ];
     for (let index = 0; index < initialMarkers.length; index++) {
@@ -53,7 +66,7 @@ export class AppComponent {
 
   generateMarker(data: any, index: number) {
     const icon = Leaflet.icon({
-      iconUrl: data.icon,
+      iconUrl: data.icon, 
       iconSize: [30, 30]
     })
     return Leaflet.marker(data.position,{icon: icon} )
@@ -66,9 +79,29 @@ export class AppComponent {
     const headers = new HttpHeaders({"Access-Control-Allow-Origin": "*"});
     const requestOptions = { headers: headers };
     this.http.get<any>("http://localhost:5000/HW").subscribe(data => {
-      console.log(data)});
+      this.generateMarkerData(data)});
   }
-
+  
+  generateMarkerData(data: any){
+    var dataFinal: dataInterface[] = []
+    data = Object.values(data)[0];
+    const sizeData: number = data.length
+    for (let i = 1; i < sizeData; i++) {
+      let dataElement: dataInterface = {
+        CATEGORIE: data[i][0],
+        DATE: data[i][1],
+        QUART: data[i][2],
+        PDQ: data[i][3],
+        LONGITUDE: data[i][6],
+        LATITUDE: data[i][7],
+        PDQ_NOM: data[i][8],
+        OUTLIERFLAG: data[i][10]
+      };
+      dataFinal.push(dataElement);
+    }
+    console.log(dataFinal)
+  }
+  
   mapClicked($event: any) {
     console.log($event.latlng.lat, $event.latlng.lng);
   }
