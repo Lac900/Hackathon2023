@@ -50,12 +50,15 @@ export class AppComponent {
       iconUrl: data.icon, 
       iconSize: [20, 20]
     })
-    return Leaflet.marker(data.position,{icon: icon} )
-      .on('click', (event) => this.markerClicked(event, index));
+    let marker = Leaflet.marker(data.position,{icon: icon} )
+    .on('click', (event) => this.markerClicked(event, index))
+    this.markers.push(marker);
+    return marker;
   }
 
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
+    console.log("asda")
     const headers = new HttpHeaders({"Access-Control-Allow-Origin": "*"});
     const requestOptions = { headers: headers };
     this.http.get<any>("http://localhost:5000/HW").subscribe(data => {
@@ -152,6 +155,9 @@ export class AppComponent {
     switch ((e.target as HTMLImageElement).id){
       case 'car_thief': { 
           this.toggleCarThief =!this.toggleCarThief;
+          this.markers.forEach((e) => {
+            e.remove();
+          })
            break; 
         } 
         case 'mefait': { 
