@@ -1,15 +1,29 @@
 <div class="Container">
-  <H1> Montreal Criminal Activity Monitoring</H1>
+  <H1 style="font-family:'sans-serif'"> Outil de Surveillance des activités criminels sur l'île de Montréal</H1>
   <div class="map-container"
     leaflet
     [leafletOptions]="options"
     (leafletMapReady)="onMapReady($event)"
     (leafletClick)="mapClicked($event)">
   </div>
+  
   <form name="form1">
-    <label for="adm">Month and year: </label>
+    <label for="adm">Mois et année: </label>
     <input type="month" name="doa">
   </form>
 </div>
+<div class="img-with-text">
+  <img src="../assets/car_thief.png"  style="width:50px;height:50px;padding-left: 4em;padding-top: 3em">
+  <img src="../assets/profanity.png"  style="width:50px;height:50px;padding-left: 5em;">
+  <img src="../assets/car.png"  style="width:60px;height:60px;padding-left: 7em;">
+  <img src="../assets/house_thief.png"  style="width:50px;height:50px;padding-left: 7em;">
+  <img src="../assets/robbery_knife.png"  style="width:50px;height:50px;padding-left: 5em;">
+  <img src="../assets/skull.png"  style="width:50px;height:50px;padding-left: 7em;">
+  <img src="../assets/red-flag.png"  style="width:50px;height:50px;padding-left: 12em;">
+</div>
+<div class="img-with-text">
+  <p style="font-family:'sans-serif'">Vol de véhicule à moteur &nbsp;&nbsp;&nbsp; Méfait &nbsp;&nbsp;&nbsp; Vol dans / sur véhicule à moteur &nbsp;&nbsp;&nbsp; Introduction &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vols qualifiés &nbsp;&nbsp;&nbsp; Infractions entrainant la mort &nbsp;&nbsp;&nbsp; Zone d'augmentation de crimes</p>
+</div>
+
 
 <router-outlet></router-outlet>
