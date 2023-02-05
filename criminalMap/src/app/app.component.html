@@ -12,14 +12,14 @@
     <input type="month" name="doa">
   </form>
 </div>
-<div class="img-with-text">
-  <img src="../assets/car_thief.png"  style="width:50px;height:50px;padding-left: 4em;padding-top: 3em">
-  <img src="../assets/profanity.png"  style="width:50px;height:50px;padding-left: 5em;">
-  <img src="../assets/car.png"  style="width:60px;height:60px;padding-left: 7em;">
-  <img src="../assets/house_thief.png"  style="width:50px;height:50px;padding-left: 7em;">
-  <img src="../assets/robbery_knife.png"  style="width:50px;height:50px;padding-left: 5em;">
-  <img src="../assets/skull.png"  style="width:50px;height:50px;padding-left: 7em;">
-  <img src="../assets/red-flag.png"  style="width:50px;height:50px;padding-left: 12em;">
+<div class="toggleImg">
+  <img src="../assets/car_thief.png"  style="width:50px;height:50px;margin-left: 4em;margin-top: 3em" [ngClass]="{'selected' : toggleCarThief, 'empty': !toggleCarThief}" (click)="test($event)" id="car_thief">
+  <img src="../assets/profanity.png"  style="width:50px;height:50px;margin-left: 5em;" [ngClass]="{'selected' : toggleMefait, 'empty': !toggleMefait}" (click)="test($event)" id="mefait">
+  <img src="../assets/car.png"  style="width:60px;height:60px;margin-left: 7em;" [ngClass]="{'selected' : toggleCar, 'empty': !toggleCar}" (click)="test($event)" id="car">
+  <img src="../assets/house_thief.png"  style="width:50px;height:50px;margin-left: 7em;" [ngClass]="{'selected' : toggleHouseThief, 'empty': !toggleHouseThief}" (click)="test($event)" id="house_thief">
+  <img src="../assets/robbery_knife.png"  style="width:50px;height:50px;margin-left: 5em;" [ngClass]="{'selected' : toggleThief, 'empty': !toggleThief}" (click)="test($event)" id="thief">
+  <img src="../assets/skull.png"  style="width:50px;height:50px;margin-left: 7em;" [ngClass]="{'selected' : toggleDead, 'empty': !toggleDead}" (click)="test($event)" id="dead">
+  <img src="../assets/red-flag.png"  style="width:50px;height:50px;margin-left: 12em;" [ngClass]="{'selected' : toggleAbberant, 'empty': !toggleAbberant}" (click)="test($event)" id="abberant">
 </div>
 <div class="img-with-text">
   <p style="font-family:'sans-serif'">Vol de véhicule à moteur &nbsp;&nbsp;&nbsp; Méfait &nbsp;&nbsp;&nbsp; Vol dans / sur véhicule à moteur &nbsp;&nbsp;&nbsp; Introduction &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vols qualifiés &nbsp;&nbsp;&nbsp; Infractions entrainant la mort &nbsp;&nbsp;&nbsp; Zone d'augmentation de crimes</p>

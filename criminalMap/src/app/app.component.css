@@ -1,4 +1,11 @@
 .map-container {
     height: 600px;
   }
-  
+
+.selected {
+    background-color: gray;
+}
+
+.empty {
+    background-color: transparent;
+}
