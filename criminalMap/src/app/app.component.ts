@@ -135,7 +135,7 @@ export class AppComponent {
           time:dataToMark[index].QUART
         };
         const marker = this.generateMarker(dataMarker, index);
-        marker.addTo(this.map).bindPopup(`<b>${dataMarker.category},  ${dataMarker.time},  ${dataMarker.date}</b>`);
+        marker.addTo(this.map).bindPopup(`<b>${dataMarker.category} le ${dataMarker.date} de ${dataMarker.time}</b>`);
         this.map.panTo(dataMarker.position);
         this.markers.push(marker)
     }
@@ -179,4 +179,36 @@ export class AppComponent {
   markerDragEnd($event: any, index: number) {
     console.log($event.target.getLatLng());
   } 
+
+  InitMarkerDataOutliers(data: any){
+
+    var dataFinal: dataInterface[] = []
+    data = Object.values(data)[0];
+    const sizeData: number = data.length
+    for (let i = 1; i < data.length; i++) {
+      if(data[i][10] == 'True'){
+        let incidentIcon = "../assets/robbery_soft.png";
+        let dataElement: dataInterface = {
+          CATEGORIE: data[i][0],
+          DATE: data[i][1],
+          QUART: data[i][2],
+          PDQ: data[i][3],
+          LONGITUDE: data[i][6],
+          LATITUDE: data[i][7],
+          PDQ_NOM: data[i][8],
+          OUTLIERFLAG: data[i][10],
+          ICON: incidentIcon
+        };
+        dataFinal.push(dataElement);
+      }
+    }
+    
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    var dataInitial: dataInterface[] = []
+    dataInitial = this.filterDayMonth(dataFinal,currentYear,currentMonth)
+
+    this.generateMarkerData(dataInitial)
+  }
 }
