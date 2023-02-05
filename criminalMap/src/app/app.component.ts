@@ -4,6 +4,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
+interface position {
+  lat: number;
+  lng: number;
+}
+
 interface dataInterface {
   CATEGORIE: string;
   DATE: Date;
@@ -13,7 +18,8 @@ interface dataInterface {
   LATITUDE: number;
   PDQ_NOM: string;
   OUTLIERFLAG: boolean;
-  }
+  ICON: string;
+}
 
 Leaflet.Icon.Default.imagePath = 'assets/';
 const serverURL = "localhost:5000/"
@@ -86,7 +92,7 @@ export class AppComponent {
     var dataFinal: dataInterface[] = []
     data = Object.values(data)[0];
     const sizeData: number = data.length
-    for (let i = 1; i < sizeData; i++) {
+    for (let i = 1; i < 100; i++) {
       let dataElement: dataInterface = {
         CATEGORIE: data[i][0],
         DATE: data[i][1],
@@ -95,12 +101,28 @@ export class AppComponent {
         LONGITUDE: data[i][6],
         LATITUDE: data[i][7],
         PDQ_NOM: data[i][8],
-        OUTLIERFLAG: data[i][10]
+        OUTLIERFLAG: data[i][10],
+        ICON: "../assets/gun.png"
       };
       dataFinal.push(dataElement);
     }
-    console.log(dataFinal)
+    this.initializeMarkers(dataFinal)
   }
+
+  initializeMarkers(dataToMark: dataInterface[]) {
+    for (let index = 0; index < dataToMark.length; index++) {
+      let dataMarker = 
+        {
+          position: { lat: dataToMark[index].LATITUDE, lng: dataToMark[index].LONGITUDE },
+          icon:dataToMark[index].ICON
+        };
+        const marker = this.generateMarker(dataMarker, index);
+        marker.addTo(this.map).bindPopup(`<b>${dataMarker.position.lat},  ${dataMarker.position.lng}</b>`);
+        this.map.panTo(dataMarker.position);
+        this.markers.push(marker)
+    }
+  }
+
   
   mapClicked($event: any) {
     console.log($event.latlng.lat, $event.latlng.lng);
