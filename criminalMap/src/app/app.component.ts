@@ -49,6 +49,8 @@ export class AppComponent {
   toggleThief = true;
   toggleDead = true;
   toggleAbberant = false;
+  year=2023;
+  month=1;
 
   generateMarker(data: any, index: number) {
     const icon = Leaflet.icon({
@@ -174,6 +176,17 @@ export class AppComponent {
       }
     }
   }
+
+  dateChanged(){
+    let str = (document.getElementById("YM") as HTMLInputElement).value;
+    let MMYY = str.split('-');
+    console.log(MMYY);
+    if(+MMYY[1] > 2023) return;
+    if(+MMYY[0] > 12) return;
+    this.year = +MMYY[1];
+    this.month = +MMYY[0];
+    this.updateMap(+MMYY[1],+MMYY[0])
+  }
   
   updateMap(year: number,month:number){
     this.markers.forEach((e) => {
@@ -196,42 +209,35 @@ export class AppComponent {
     switch ((e.target as HTMLImageElement).id){
       case 'car_thief': { 
           this.toggleCarThief =!this.toggleCarThief;
-          this.updateMap(2023,1)
           break; 
         } 
         case 'mefait': { 
           this.toggleMefait =!this.toggleMefait;
-          this.updateMap(2023,1)
           break; 
         } 
         case 'car': { 
           this.toggleCar =!this.toggleCar;
-          this.updateMap(2023,1)
           break; 
         } 
         case 'house_thief': { 
           this.toggleHouseThief =!this.toggleHouseThief;
-          this.updateMap(2023,1)
           break; 
         } 
         case 'thief': { 
           this.toggleThief =!this.toggleThief;
-          this.updateMap(2023,1)
           break; 
         } 
         case 'dead': { 
           this.toggleDead =!this.toggleDead;
-          this.updateMap(2023,1)
           break; 
         } 
         case 'abberant': {
           this.toggleAbberant =!this.toggleAbberant;
           this.setAllOpposite(this.toggleAbberant);
-          this.updateMap(2023,1)
           break;
         }
     }
-    
+    this.updateMap(this.year,this.month);
   }
 
   filterQuarter(quarter: string){

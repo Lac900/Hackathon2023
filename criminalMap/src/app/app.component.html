@@ -7,10 +7,9 @@
     (leafletClick)="mapClicked($event)">
   </div>
   
-  <form name="form1">
-    <label for="adm">Mois et année: </label>
-    <input type="month" name="doa">
-  </form>
+  <label for="adm">Mois et année (MM-YYYY): </label>
+  <input type="month" name="doa" id="YM">
+  <button (click)="dateChanged()"> Select</button>
 </div>
 <div class="toggleImg">
   <img src="../assets/car_thief.png"  style="width:50px;height:50px;margin-left: 4em;margin-top: 3em" [ngClass]="{'selected' : toggleCarThief, 'empty': !toggleCarThief}" (click)="test($event)" id="car_thief">
