@@ -9,7 +9,7 @@
   
   <label for="adm">Mois et année (MM-YYYY): </label>
   <input type="month" name="doa" id="YM">
-  <button (click)="dateChanged()"> Select</button>
+  <button (click)="dateChanged()"> Selectionner</button>
 </div>
 <div class="toggleImg">
   <img src="../assets/car_thief.png"  style="width:50px;height:50px;margin-left: 4em;margin-top: 3em" [ngClass]="{'selected' : toggleCarThief, 'empty': !toggleCarThief}" (click)="test($event)" id="car_thief">
