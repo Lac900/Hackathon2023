@@ -12,7 +12,7 @@ interface dataInterface {
   LONGITUDE: number;
   LATITUDE: number;
   PDQ_NOM: string;
-  OUTLIERFLAG: boolean;
+  OUTLIERFLAG: string;
   ICON: string;
 }
 
@@ -42,6 +42,13 @@ export class AppComponent {
     zoom: 11,
     center: { lat: 45.56010577746812, lng: -73.62072318393797 }
   }
+  toggleCarThief = true;
+  toggleMefait = true;
+  toggleCar = true;
+  toggleHouseThief = true;
+  toggleThief = true;
+  toggleDead = true;
+  toggleAbberant = false;
 
   generateMarker(data: any, index: number) {
     const icon = Leaflet.icon({
@@ -56,7 +63,6 @@ export class AppComponent {
 
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
-    console.log("asda")
     const headers = new HttpHeaders({"Access-Control-Allow-Origin": "*"});
     const requestOptions = { headers: headers };
     this.http.get<any>("http://localhost:5000/HW").subscribe(data => {
@@ -67,7 +73,6 @@ export class AppComponent {
     data = Object.values(data)[0];
     const sizeData: number = data.length
     for (let i = 1; i < data.length; i++) {
-
       let incidentIcon = "../assets/gun.png";
       switch(data[i][0]) { 
         case 'Vol de véhicule à moteur': { 
@@ -111,6 +116,7 @@ export class AppComponent {
     }
     dataFiltered = dataFinal
     
+    
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
 
@@ -120,59 +126,108 @@ export class AppComponent {
 
   prepareMarkers(dataToMark: dataInterface[]) {
     for (let index = 0; index < dataToMark.length; index++) {
-      let dataMarker = 
-        {
-          position: { lat: dataToMark[index].LATITUDE, lng: dataToMark[index].LONGITUDE },
-          icon:dataToMark[index].ICON,
-          category:dataToMark[index].CATEGORIE,
-          date:dataToMark[index].DATE,
-          time:dataToMark[index].QUART
-        };
-        const marker = this.generateMarker(dataMarker, index);
-        marker.addTo(this.map).bindPopup(`<b>${dataMarker.category} le ${dataMarker.date} de ${dataMarker.time}</b>`);
-        this.map.panTo(dataMarker.position);
-        this.markers.push(marker)
+      let appendData = false;
+      switch(dataToMark[index].CATEGORIE) { 
+        case 'Vol de véhicule à moteur': { 
+          appendData = this.toggleCarThief;
+           break; 
+        } 
+        case 'Méfait': { 
+          appendData = this.toggleMefait;
+           break; 
+        } 
+        case 'Vol dans / sur véhicule à moteur': { 
+          appendData = this.toggleCar;
+          break; 
+        } 
+        case 'Introduction': { 
+          appendData = this.toggleHouseThief;
+          break; 
+        } 
+        case 'Vols qualifiés': { 
+          appendData = this.toggleThief;
+          break; 
+        } 
+        case 'Infractions entrainant la mort': { 
+          appendData = this.toggleDead;
+          break; 
+        } 
+      }
+      let icon = dataToMark[index].ICON;
+      if (this.toggleAbberant && dataToMark[index].OUTLIERFLAG == "True"){        
+        icon = "../assets/red-flag.png";
+        appendData = true;
+      }
+      if (appendData){
+        let dataMarker = 
+          {
+            position: { lat: dataToMark[index].LATITUDE, lng: dataToMark[index].LONGITUDE },
+            icon:icon,
+            category:dataToMark[index].CATEGORIE,
+            date:dataToMark[index].DATE,
+            time:dataToMark[index].QUART
+          };
+          const marker = this.generateMarker(dataMarker, index);
+          marker.addTo(this.map).bindPopup(`<b>${dataMarker.category} le ${dataMarker.date} de ${dataMarker.time}</b>`);
+          this.map.panTo(dataMarker.position);
+          this.markers.push(marker)
+      }
     }
   }
-  toggleCarThief = true;
-  toggleMefait = true;
-  toggleCar = true;
-  toggleHouseThief = true;
-  toggleThief = true;
-  toggleDead = true;
-  toggleAbberant = true;
+  
+  updateMap(year: number,month:number){
+    this.markers.forEach((e) => {
+      e.remove();
+    })
+    this.filterDayMonth(year,month);
+  }
+
+  setAllOpposite(value: boolean){
+    this.toggleCar = !value;
+    this.toggleCarThief = !value;
+    this.toggleHouseThief = !value;
+    this.toggleDead = !value;
+    this.toggleMefait = !value;
+    this.toggleThief = !value;
+  }
+
 
   test(e: Event){
     switch ((e.target as HTMLImageElement).id){
       case 'car_thief': { 
           this.toggleCarThief =!this.toggleCarThief;
-          this.markers.forEach((e) => {
-            e.remove();
-          })
-           break; 
+          this.updateMap(2023,1)
+          break; 
         } 
         case 'mefait': { 
           this.toggleMefait =!this.toggleMefait;
-           break; 
+          this.updateMap(2023,1)
+          break; 
         } 
         case 'car': { 
           this.toggleCar =!this.toggleCar;
+          this.updateMap(2023,1)
           break; 
         } 
         case 'house_thief': { 
           this.toggleHouseThief =!this.toggleHouseThief;
+          this.updateMap(2023,1)
           break; 
         } 
         case 'thief': { 
           this.toggleThief =!this.toggleThief;
+          this.updateMap(2023,1)
           break; 
         } 
         case 'dead': { 
           this.toggleDead =!this.toggleDead;
+          this.updateMap(2023,1)
           break; 
         } 
         case 'abberant': {
           this.toggleAbberant =!this.toggleAbberant;
+          this.setAllOpposite(this.toggleAbberant);
+          this.updateMap(2023,1)
           break;
         }
     }
