@@ -4,11 +4,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
-interface position {
-  lat: number;
-  lng: number;
-}
-
 interface dataInterface {
   CATEGORIE: string;
   DATE: Date;
@@ -20,6 +15,9 @@ interface dataInterface {
   OUTLIERFLAG: boolean;
   ICON: string;
 }
+
+var dataFinal: dataInterface[] = []
+var dataFiltered: dataInterface[] = []
 
 Leaflet.Icon.Default.imagePath = 'assets/';
 const serverURL = "localhost:5000/"
@@ -63,8 +61,6 @@ export class AppComponent {
   }
   
   InitMarkerData(data: any){
-
-    var dataFinal: dataInterface[] = []
     data = Object.values(data)[0];
     const sizeData: number = data.length
     for (let i = 1; i < data.length; i++) {
@@ -110,21 +106,16 @@ export class AppComponent {
       };
       dataFinal.push(dataElement);
     }
+    dataFiltered = dataFinal
     
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
 
     var dataInitial: dataInterface[] = []
-    dataInitial = this.filterDayMonth(dataFinal,currentYear,currentMonth)
-
-    this.generateMarkerData(dataInitial)
+    this.filterDayMonth(currentYear,currentMonth)
   }
 
-  generateMarkerData(data: any){
-    this.initializeMarkers(data)
-  }
-
-  initializeMarkers(dataToMark: dataInterface[]) {
+  prepareMarkers(dataToMark: dataInterface[]) {
     for (let index = 0; index < dataToMark.length; index++) {
       let dataMarker = 
         {
@@ -141,31 +132,40 @@ export class AppComponent {
     }
   }
 
-  filterQuarter(data: dataInterface[], quarter: string){
+  filterQuarter(quarter: string){
     var dataInitial: dataInterface[] = []
-    for (let i = 0; i < data.length; i++) {
-      if(data[i].QUART == quarter)
-        dataInitial.push(data[i]);
+    for (let i = 0; i < dataFinal.length; i++) {
+      if(dataFinal[i].QUART == quarter)
+        dataInitial.push(dataFinal[i]);
     }
-    return(dataInitial)
+    dataFiltered = dataFinal
+    this.prepareMarkers(dataInitial)
   }
   
-  filterDayMonth(data: dataInterface[], year: number, month: number){
+  filterDayMonth(year: number, month: number){
     var dataInitial: dataInterface[] = []
-    for (let i = 0; i < data.length; i++) {
-      if(new Date(data[i].DATE).getFullYear() == year && new Date(data[i].DATE).getMonth()+1 == month)
-        dataInitial.push(data[i]);
+    for (let i = 0; i < dataFinal.length; i++) {
+      if(new Date(dataFinal[i].DATE).getFullYear() == year && new Date(dataFinal[i].DATE).getMonth()+1 == month)
+        dataInitial.push(dataFinal[i]);
     }
-    return(dataInitial)
+    dataFiltered = dataFinal
+    this.prepareMarkers(dataInitial)
   }
 
-  filterCategory(data: dataInterface[], category: string){
-    var dataInitial: dataInterface[] = []
-    for (let i = 0; i < data.length; i++) {
-      if(data[i].CATEGORIE == category)
-        dataInitial.push(data[i]);
+  filterCategoryIn(category: string){
+    for (let i = 0; i < dataFinal.length; i++) {
+      if(dataFinal[i].CATEGORIE == category)
+        dataFiltered.push(dataFinal[i]);
     }
-    return(dataInitial)
+    this.prepareMarkers(dataFiltered)
+  }
+
+  filterCategoryOut(category: string){
+    for (let i = 0; i < dataFiltered.length; i++) {
+      if(dataFiltered[i].CATEGORIE == category)
+        dataFiltered.splice(i,1);
+    }
+    this.prepareMarkers(dataFiltered)
   }
 
   mapClicked($event: any) {
@@ -207,8 +207,6 @@ export class AppComponent {
     const currentYear = new Date().getFullYear();
 
     var dataInitial: dataInterface[] = []
-    dataInitial = this.filterDayMonth(dataFinal,currentYear,currentMonth)
-
-    this.generateMarkerData(dataInitial)
+    this.prepareMarkers(dataInitial)
   }
 }
