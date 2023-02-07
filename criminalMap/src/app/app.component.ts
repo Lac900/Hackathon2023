@@ -17,7 +17,6 @@ interface dataInterface {
 }
 
 var dataFinal: dataInterface[] = []
-var dataFiltered: dataInterface[] = []
 
 Leaflet.Icon.Default.imagePath = 'assets/';
 const serverURL = "localhost:5000/"
@@ -51,6 +50,9 @@ export class AppComponent {
   toggleAbberant = false;
   year=2023;
   month=1;
+  toggleEvening = true;
+  toggleNight = true;
+  toggleDay = true;
 
   generateMarker(data: any, index: number) {
     const icon = Leaflet.icon({
@@ -116,14 +118,8 @@ export class AppComponent {
       };
       dataFinal.push(dataElement);
     }
-    dataFiltered = dataFinal
-    
-    
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
 
-    var dataInitial: dataInterface[] = []
-    this.filterDayMonth(currentYear,currentMonth)
+    this.updateMap();
   }
 
   prepareMarkers(dataToMark: dataInterface[]) {
@@ -155,6 +151,20 @@ export class AppComponent {
           break; 
         } 
       }
+      switch(dataToMark[index].QUART) { 
+        case 'jour':{
+          appendData = this.toggleDay;
+          break;
+        }
+        case 'soir':{
+          appendData = this.toggleEvening;
+          break;
+        }
+        case 'nuit':{
+          appendData = this.toggleNight;
+          break;
+        }
+      }
       let icon = dataToMark[index].ICON;
       if (this.toggleAbberant && dataToMark[index].OUTLIERFLAG == "True"){        
         icon = "../assets/red-flag.png";
@@ -181,18 +191,17 @@ export class AppComponent {
     let str = (document.getElementById("YM") as HTMLInputElement).value;
     let MMYY = str.split('-');
     console.log(MMYY);
-    if(+MMYY[1] > 2023) return;
-    if(+MMYY[0] > 12) return;
-    this.year = +MMYY[1];
-    this.month = +MMYY[0];
-    this.updateMap(+MMYY[1],+MMYY[0])
+    if(+MMYY[0] > 2023 && +MMYY[1] > 12) return;
+    this.year = +MMYY[0];
+    this.month = +MMYY[1];
+    this.updateMap()
   }
   
-  updateMap(year: number,month:number){
+  updateMap(){
     this.markers.forEach((e) => {
       e.remove();
     })
-    this.filterDayMonth(year,month);
+    this.filterDayMonth();
   }
 
   setAllOpposite(value: boolean){
@@ -205,7 +214,25 @@ export class AppComponent {
   }
 
 
-  test(e: Event){
+  filterTimeOfDay(e: Event){
+    switch ((e.target as HTMLImageElement).id){
+      case 'day': { 
+          this.toggleDay =!this.toggleDay;
+          break; 
+        } 
+        case 'evening': { 
+          this.toggleEvening =!this.toggleEvening;
+          break; 
+        } 
+        case 'night': { 
+          this.toggleNight =!this.toggleNight;
+          break; 
+        } 
+    }
+    this.updateMap();
+  }
+
+  filterCategory(e: Event){
     switch ((e.target as HTMLImageElement).id){
       case 'car_thief': { 
           this.toggleCarThief =!this.toggleCarThief;
@@ -237,43 +264,21 @@ export class AppComponent {
           break;
         }
     }
-    this.updateMap(this.year,this.month);
-  }
-
-  filterQuarter(quarter: string){
-    var dataInitial: dataInterface[] = []
-    for (let i = 0; i < dataFinal.length; i++) {
-      if(dataFinal[i].QUART == quarter)
-        dataInitial.push(dataFinal[i]);
-    }
-    dataFiltered = dataFinal
-    this.prepareMarkers(dataInitial)
+    this.updateMap();
   }
   
-  filterDayMonth(year: number, month: number){
+  filterDayMonth(){
     var dataInitial: dataInterface[] = []
+    let monthIteraton: number;
+    let yearIteration: number;
     for (let i = 0; i < dataFinal.length; i++) {
-      if(new Date(dataFinal[i].DATE).getFullYear() == year && new Date(dataFinal[i].DATE).getMonth()+1 == month)
+      monthIteraton = Number(new Date(dataFinal[i].DATE).getMonth()+1);
+      yearIteration = Number(new Date(dataFinal[i].DATE).getFullYear());
+      if(yearIteration == this.year && monthIteraton == this.month){
         dataInitial.push(dataFinal[i]);
+      }
     }
-    dataFiltered = dataFinal
     this.prepareMarkers(dataInitial)
-  }
-
-  filterCategoryIn(category: string){
-    for (let i = 0; i < dataFinal.length; i++) {
-      if(dataFinal[i].CATEGORIE == category)
-        dataFiltered.push(dataFinal[i]);
-    }
-    this.prepareMarkers(dataFiltered)
-  }
-
-  filterCategoryOut(category: string){
-    for (let i = 0; i < dataFiltered.length; i++) {
-      if(dataFiltered[i].CATEGORIE == category)
-        dataFiltered.splice(i,1);
-    }
-    this.prepareMarkers(dataFiltered)
   }
 
   mapClicked($event: any) {
@@ -286,35 +291,5 @@ export class AppComponent {
 
   markerDragEnd($event: any, index: number) {
     console.log($event.target.getLatLng());
-  } 
-
-  InitMarkerDataOutliers(data: any){
-
-    var dataFinal: dataInterface[] = []
-    data = Object.values(data)[0];
-    const sizeData: number = data.length
-    for (let i = 1; i < data.length; i++) {
-      if(data[i][10] == 'True'){
-        let incidentIcon = "../assets/robbery_soft.png";
-        let dataElement: dataInterface = {
-          CATEGORIE: data[i][0],
-          DATE: data[i][1],
-          QUART: data[i][2],
-          PDQ: data[i][3],
-          LONGITUDE: data[i][6],
-          LATITUDE: data[i][7],
-          PDQ_NOM: data[i][8],
-          OUTLIERFLAG: data[i][10],
-          ICON: incidentIcon
-        };
-        dataFinal.push(dataElement);
-      }
-    }
-    
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-
-    var dataInitial: dataInterface[] = []
-    this.prepareMarkers(dataInitial)
   }
 }

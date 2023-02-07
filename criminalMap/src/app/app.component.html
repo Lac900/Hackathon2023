@@ -10,16 +10,25 @@
   <label for="adm">Mois et année (MM-YYYY): </label>
   <input type="month" name="doa" id="YM">
   <button (click)="dateChanged()"> Selectionner</button>
+
 </div>
+
 <div class="toggleImg">
-  <img src="../assets/car_thief.png"  style="width:50px;height:50px;margin-left: 4em;margin-top: 3em" [ngClass]="{'selected' : toggleCarThief, 'empty': !toggleCarThief}" (click)="test($event)" id="car_thief">
-  <img src="../assets/profanity.png"  style="width:50px;height:50px;margin-left: 5em;" [ngClass]="{'selected' : toggleMefait, 'empty': !toggleMefait}" (click)="test($event)" id="mefait">
-  <img src="../assets/car.png"  style="width:60px;height:60px;margin-left: 7em;" [ngClass]="{'selected' : toggleCar, 'empty': !toggleCar}" (click)="test($event)" id="car">
-  <img src="../assets/house_thief.png"  style="width:50px;height:50px;margin-left: 7em;" [ngClass]="{'selected' : toggleHouseThief, 'empty': !toggleHouseThief}" (click)="test($event)" id="house_thief">
-  <img src="../assets/robbery_knife.png"  style="width:50px;height:50px;margin-left: 5em;" [ngClass]="{'selected' : toggleThief, 'empty': !toggleThief}" (click)="test($event)" id="thief">
-  <img src="../assets/skull.png"  style="width:50px;height:50px;margin-left: 7em;" [ngClass]="{'selected' : toggleDead, 'empty': !toggleDead}" (click)="test($event)" id="dead">
-  <img src="../assets/red-flag.png"  style="width:50px;height:50px;margin-left: 12em;" [ngClass]="{'selected' : toggleAbberant, 'empty': !toggleAbberant}" (click)="test($event)" id="abberant">
+  <img src="../assets/day.png"  style="width:50px;height:50px;margin-left: 4em;margin-top: 3em" [ngClass]="{'selected' : toggleDay, 'empty': !toggleDay}" (click)="filterTimeOfDay($event)" id="day">
+  <img src="../assets/evening.png"  style="width:50px;height:50px;margin-left: 5em;" [ngClass]="{'selected' : toggleEvening, 'empty': !toggleEvening}" (click)="filterTimeOfDay($event)" id="evening">
+  <img src="../assets/night.png"  style="width:60px;height:60px;margin-left: 7em;" [ngClass]="{'selected' : toggleNight, 'empty': !toggleNight}" (click)="filterTimeOfDay($event)" id="night">
 </div>
+
+<div class="toggleImg">
+  <img src="../assets/car_thief.png"  style="width:50px;height:50px;margin-left: 4em;margin-top: 3em" [ngClass]="{'selected' : toggleCarThief, 'empty': !toggleCarThief}" (click)="filterCategory($event)" id="car_thief">
+  <img src="../assets/profanity.png"  style="width:50px;height:50px;margin-left: 5em;" [ngClass]="{'selected' : toggleMefait, 'empty': !toggleMefait}" (click)="filterCategory($event)" id="mefait">
+  <img src="../assets/car.png"  style="width:60px;height:60px;margin-left: 7em;" [ngClass]="{'selected' : toggleCar, 'empty': !toggleCar}" (click)="filterCategory($event)" id="car">
+  <img src="../assets/house_thief.png"  style="width:50px;height:50px;margin-left: 7em;" [ngClass]="{'selected' : toggleHouseThief, 'empty': !toggleHouseThief}" (click)="filterCategory($event)" id="house_thief">
+  <img src="../assets/robbery_knife.png"  style="width:50px;height:50px;margin-left: 5em;" [ngClass]="{'selected' : toggleThief, 'empty': !toggleThief}" (click)="filterCategory($event)" id="thief">
+  <img src="../assets/skull.png"  style="width:50px;height:50px;margin-left: 7em;" [ngClass]="{'selected' : toggleDead, 'empty': !toggleDead}" (click)="filterCategory($event)" id="dead">
+  <img src="../assets/red-flag.png"  style="width:50px;height:50px;margin-left: 12em;" [ngClass]="{'selected' : toggleAbberant, 'empty': !toggleAbberant}" (click)="filterCategory($event)" id="abberant">
+</div>
+
 <div class="img-with-text">
   <p style="font-family:'sans-serif'">Vol de véhicule à moteur &nbsp;&nbsp;&nbsp; Méfait &nbsp;&nbsp;&nbsp; Vol dans / sur véhicule à moteur &nbsp;&nbsp;&nbsp; Introduction &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vols qualifiés &nbsp;&nbsp;&nbsp; Infractions entrainant la mort &nbsp;&nbsp;&nbsp; Zone d'augmentation de crimes</p>
 </div>
